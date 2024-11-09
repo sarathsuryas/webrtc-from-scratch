@@ -1,0 +1,19 @@
+{
+  "name": "wbrtc-scratch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "socket.io": "^1.2.0"
+  }
+}
