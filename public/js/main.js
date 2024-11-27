@@ -7,7 +7,8 @@ var localStream;
 var remoteStream;
 var room = prompt('Enter room name:');
 var pcConfig = turnConfig;
-
+console.log(pcConfig)
+var count = 0
 var socket = io.connect()
 
 if (room) {
@@ -15,7 +16,7 @@ if (room) {
 }
 
 socket.on('created', (room) => {
-  console.log('Created room ' + room)
+  console.log('Created room ' + room) 
   isInitiator = true
 })
 
@@ -41,6 +42,8 @@ socket.on('log', function (array) {
 
 
 socket.on('message', (message, room) => {
+  console.log(pc,'/////////////////////////////')
+
   console.log('Client received message:', message, room);
   if (message === 'got user media') {
     maybeStart();
@@ -48,9 +51,11 @@ socket.on('message', (message, room) => {
     if (!isInitiator && !isStarted) {
       maybeStart();
     }
+    console.log('offer/////',message)
     pc.setRemoteDescription(new RTCSessionDescription(message));
     doAnswer()
   } else if (message.type === 'answer' && isStarted) {
+    console.log('answer/////',message)
     pc.setRemoteDescription(new RTCSessionDescription(message));
   } else if(message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
@@ -70,15 +75,19 @@ function sendMessage(message, room) {
   socket.emit('message', message, room)
 }
 
+function startVideo() {
+  console.log("Going to find Local media");
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(gotSream)
+    .catch((e) => {
+      alert('getUserMedia() error: ' + e.name);
+      console.log(e)
+    })
+}
+
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
-console.log("Going to find Local media");
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-  .then(gotSream)
-  .catch((e) => {
-    alert('getUserMedia() error: ' + e.name);
-    console.log(e)
-  })
+
 
 function gotSream(stream) {
   console.log('Adding local stream.');
@@ -109,7 +118,7 @@ window.onbeforeunload = function() {
 };
 
 function createPeerConnection() {
-  try {
+  try { 
     pc = new RTCPeerConnection(pcConfig)
     pc.onicecandidate = handleIceCandidate
     pc.onaddstream = handleRemoteStreamAdded;
@@ -138,7 +147,7 @@ function handleIceCandidate(event) {
 
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
-  alert('')
+  // alert('Remote stream added')
   remoteStream = event.stream
   remoteVideo.srcObject = remoteStream;
 }
